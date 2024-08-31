@@ -10,11 +10,18 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
-
+const multer = require("multer");
+const upload = multer({dest: 'uploads/'});
+if(process.env.NODE_ENV != 'production'){
+    require('dotenv').config();
+}
+console.log(process.env.SECRET);
 const listings = require("./routes/listing.js");
 const reviews = require("./routes/review.js");
 const user = require("./routes/user.js");
-app.use(express.urlencoded({extended : true}))
+
+app.use(express.urlencoded({extended : true}));
+
 app.set("view engine" , "ejs");
 app.set("views" , path.join(__dirname, "views"));
 app.use(methodOverride("_method"));
