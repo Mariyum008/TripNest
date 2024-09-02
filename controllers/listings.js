@@ -49,11 +49,23 @@ module.exports.renderEditForm = (async (req,res)=>{
         return res.redirect("/listings"); // Use return to stop further execution
     }
     // console.log(listing)
-    res.render("listings/edit.ejs",{listing});
+
+    let originalImageUrl = listing.image.url;
+    originalImageUrl = originalImageUrl.replace("/upload" , "/upload/w_250");
+    res.render("listings/edit.ejs",{listing , originalImageUrl});
 });
 
 module.exports.updateListing = async (req, res) => {
     let { id } = req.params;
+    let listing = await Listing.findByIdAndUpdate(id , { ...req.body.listing});
+
+    if(typeof req.file !== "undefined"){
+    let url = req.file.path;
+    let filename = req.file.filename;
+    listing.image = {url , filename};
+    await listing.save();
+    }
+
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });
     req.flash("success", "Listing updated!");
     res.redirect(`/listings/${id}`);

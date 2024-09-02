@@ -7,6 +7,7 @@ const {listingSchema , reviewSchema} = require("../schema.js");
 const{isLoggedIn, isOwner ,validateListing} = require("../middleware.js");
 const listingsController = require("../controllers/listings.js");
 const multer = require("multer");
+const userController = require("../controllers/users.js");
 
 const {storage} = require("../cloudConfig.js");
 const upload = multer({storage});
@@ -22,7 +23,7 @@ router.get("/new",isLoggedIn , listingsController.renderNewForm);
 router
     .route("/:id")
     .get(wrapAsync(listingsController.showListing))
-    .put(isLoggedIn, isOwner,  validateListing, wrapAsync(listingsController.updateListing))
+    .put(isLoggedIn, isOwner,  upload.single('listing[image]') ,  validateListing, wrapAsync(listingsController.updateListing))
     .delete(isLoggedIn, 
         wrapAsync(listingsController.destroyListing)
     );
@@ -33,7 +34,6 @@ router.get("/:id/edit",
     isOwner,  
     wrapAsync(listingsController.renderEditForm)
 );
-
 
 module.exports = router;
 
